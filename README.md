@@ -19,7 +19,7 @@ An ESP32-based device that measures the amount of water in the reservoir and tri
 ### Description
 * The HX711 weighing module (previously calibrated) weighs the AC water reservoir; 
 * The weight is mapped: 200g -> 0% and 2000g -> 100%;
-* A task running in parallel sends the mapped weight to ThingSpeak every 16 seconds;
+* A task running in parallel sends the mapped weight to [ThingSpeak](https://thingspeak.com/channels/2241672) every 16 seconds;
 * If the weight mapped is greater than 70 (%), a SMS is sent warning of the water reservoir level;
 * A LCD shows the weight measured; its backlight is turned on for 5 seconds when a touch sensor is activated.
 
