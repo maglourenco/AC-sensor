@@ -15,6 +15,11 @@ An ESP32-based device that measures the amount of water in the reservoir and tri
 ### Connection
 ![Project diagram](assets/circuit_diagram.JPG)
 
+### Calibration
+Before getting the weight of objects, you first need to calibrate your load cell by obtaining the calibration factor. Run the file ```calibrate_scale.ino``` to calibrate the scale.
+1. Prepare an object with a known weight (i.e. a glass of water with 300g).
+2. Upload the calibration code to your ESP32.
+
 
 ### Description
 * The HX711 weigh module (previously calibrated) weighs the AC water tank; 
