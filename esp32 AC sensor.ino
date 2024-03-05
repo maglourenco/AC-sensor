@@ -28,7 +28,7 @@ const unsigned long backlightDuration = 10000; // 10 seconds
 WiFiClient  client;
 Twilio *twilio;
 LiquidCrystal_I2C lcd(0x27, 16, 2); 
-TaskHandle_t ThingSpeakTask, SMSTask;
+TaskHandle_t ThingSpeakTask, SMSTask, BacklightTask;
 
 /**
  * sendDataToThingSpeakTask - send data to ThingSpeak every 16s (rate limited to once every 15s)
@@ -40,6 +40,17 @@ void sendDataToThingSpeakTask( void * pvParameters){
     delay(16000);
   } 
 }
+
+/**
+ * turnOfBacklightTask - turns off the backlight after 5 seconds elapsed during ESP32 boot
+ */
+void turnOfBacklightTask( void * pvParameters){
+  delay(10000);
+  lcd.noBacklight();
+  // Delete the task itself when done
+  vTaskDelete(NULL);
+}
+
 
 /**
  * sendSMSTask - send SMS through the Twilio API when the percentage is > 70%
@@ -82,11 +93,12 @@ void setup() {
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);       
   scale.set_scale(124793/303);
   scale.tare(); // reset the scale to 0
-  
   // Initialize the LCD display 
   lcd.init();                      
-  lcd.noBacklight();
-  //lcd.backlight();
+  //lcd.noBacklight();
+  lcd.backlight();
+  // Run task to shut down the lcd backlight after 5 seconds elapsed from ESP32 boot
+  xTaskCreatePinnedToCore(turnOfBacklightTask, "turnOfBacklightTask", 10000, NULL, 1, &BacklightTask, 0);
   lcd.setCursor(0,0);
   lcd.print("Initializing");
   lcd.setCursor(0,1);
@@ -111,7 +123,7 @@ void setup() {
   twilio = new Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);  
   delay(100);
   
-  //create a task that will be executed continuously in the sendDataToThingSpeakTask() function, with priority 1 and executed on core 0
+  // Create a task that will be executed continuously in the sendDataToThingSpeakTask() function, with priority 1 and executed on core 0
   xTaskCreatePinnedToCore(
                     sendDataToThingSpeakTask,   /* Task function. */
                     "sendDataToThingSpeakTask",     /* name of task. */
