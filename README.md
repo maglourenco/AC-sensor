@@ -1,7 +1,7 @@
 # AC Sensor
 An ESP32-based device that measures the amount of water in the reservoir and triggers SMS warnings when above a certain threshold. 
 
-![Project gif](assets/project_vid.gif)
+![Project gif](assets/v2/project_vid.gif)
 
 
 ## Circuit
